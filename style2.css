@@ -1,0 +1,89 @@
+body {
+    text-align: center;
+    font-family: Arial, sans-serif;
+    background-image: url('assets/2125.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    color: white;
+    margin: 0; 
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; 
+    align-items: center; 
+}
+#title {
+    width: 50vw; 
+    height: auto; 
+    margin-bottom: 20px; 
+}
+.character-box {
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    margin: 10px;
+}
+.nav-button {
+    cursor: pointer;
+    margin: 0 10px; 
+    width: 50px; 
+    height: auto; 
+}
+#characterImage {
+    width: 100px; 
+    height: auto; 
+}
+.enter-button {
+    margin-top: 10px; 
+    cursor: pointer;
+    width: 150px;
+    height: 50px;
+}
+.name-input {
+    margin-top: 10px; 
+}
+    input {
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: none;
+    text-align: center;
+    background: url(assets/textbox.png) no-repeat center; 
+    color: black; 
+    box-sizing: border-box;
+    width: 300px; /* Add this */
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+@keyframes float2 {
+    100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(+10px);
+    }
+    0% {
+        transform: translateY(0);
+    }
+}
+
+#characterImage {
+    animation: float 2s ease-in-out infinite;
+}
+
+#title {
+    animation: float2 3s ease-in-out infinite;
+}

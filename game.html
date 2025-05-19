@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title> Game On 🎮</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="top-bar">
+    <div id="greeting">Good Morning Player</div>
+    <div id="topRightContainer"></div>
+    <div class="status-bars">
+      <div class="status"><img src="assets/fork.png" class="status-icon"><div class="status-bar"><div class="status-fill" id="status1"></div></div></div>
+      <div class="status"><img src="assets/hygine.png" class="status-icon"><div class="status-bar"><div class="status-fill" id="status2"></div></div></div>
+      <div class="status"><img src="assets/energy.png" class="status-icon"><div class="status-bar"><div class="status-fill" id="status3"></div></div></div>
+      <div class="status"><img src="assets/happiness1.png" class="status-icon" id="happinessIcon"><div class="status-bar"><div class="status-fill" id="status4"></div></div></div>
+    </div>
+  </div>
+
+  <div class="main-wrapper">
+    <div class="game-area" id="gameArea">
+      <img src="assets/planetA.png" id="Apple" class="circle-img" style="top: 60%; left: 60%;" alt="Apple">
+      <img src="assets/planetB.png" id="Butter" class="circle-img" style="top: 2%; left: 25%;" alt="Butter">
+      <img src="assets/planetC.png" id="Cookie" class="circle-img" style="top: 35%; left: 5%;" alt="Cookie">
+      <img src="assets/planetD.png" id="Donut" class="circle-img" style="top: 60%; left: 30%;" alt="Donut">
+      <img src="assets/planetE.png" id="Coffee" class="circle-img" style="top: 10%; left: 55%;" alt="Coffee">
+      <img id="player" src="" alt="Player" style="top: 50px; left: 80px;" />
+    </div>
+
+    <div class="right-panel" id="rightPanel">
+      <div class="location-header"><strong id="locationTitle">Start Your Adventure!!!</strong></div>
+      <div class="action-buttons" id="actionButtons">
+        <div class="button" onclick="performAction(0)"></div>
+        <div class="button" onclick="performAction(1)"></div>
+        <div class="button" onclick="performAction(2)"></div>
+        <div class="button" onclick="performAction(3)"></div>
+      </div>
+
+      <div class="controls">
+        <div></div><div data-direction="up">W</div><div></div>
+        <div data-direction="left">A</div><div></div><div data-direction="right">D</div>
+        <div></div><div data-direction="down">S</div><div></div>
+    </div>
+    </div>
+  </div>
+
+  <div class="game-over" id="gameOver">
+      <div style="text-align: center;">
+        Game Over
+        <br><br>
+        <button onclick="restartGame()" class="restart-button">Restart</button>
+      </div>
+  </div>
+
+  <audio id="bgMusic" src="assets/2.mp3" loop autoplay></audio>
+
+<script>
+  const player = document.getElementById('player');
+  let x = 80;
+  let y = 50;
+  const speed = 2;
+  const keys = {};
+
+  const statusBars = [
+    document.getElementById('status1'),
+    document.getElementById('status2'),
+    document.getElementById('status3'),
+    document.getElementById('status4')
+  ];
+
+  const barValues = [50, 50, 50, 50];
+
+  const locations = [
+    { id: 'Coffee', actions: [
+      { label: 'Drink Coffee', stat: 2, delta: 10 },
+      { label: 'Drink Coffee', stat: 2, delta: 10 },
+      { label: 'Drink Coffee', stat: 2, delta: 10 },
+      { label: 'Drink Coffee', stat: 2, delta: 10 }
+    ]},
+    { id: 'Donut', actions: [
+      { label: 'Eat', stat: 0, delta: 10 },
+      { label: 'Explore', stat: 3, delta: 10 },
+      { label: 'Take a Shower ', stat: 1, delta: -20 }
+    ]},
+    { id: 'Cookie', actions: [
+      { label: 'Eat', stat: 0, delta: 2 },
+      { label: 'Set a Camp', stat: 2, delta: 5 }
+    ]},
+    { id: 'Butter', actions: [
+      { label: 'Take A Shower', stat: 1, delta: 15 },
+      { label: 'Swim', stat: 2, delta: -10 }
+    ]},
+    { id: 'Apple', actions: [
+      { label: 'Sell Apples', stat: 3, delta: -2 },
+      { label: 'Explore the Forest', stat: 2, delta: -1 }
+    ]}
+  ];
+
+  let currentLocation = locations[0];
+  const rightPanel = document.getElementById('rightPanel');
+  const locationTitle = document.getElementById('locationTitle');
+  const gameOverScreen = document.getElementById('gameOver');
+  const greeting = document.getElementById('greeting');
+
+  document.addEventListener('keydown', e => {
+    const key = e.key.toLowerCase();
+    keys[key] = true;
+
+    // Also support arrow keys
+    if (e.key === 'ArrowUp') keys['w'] = true;
+    if (e.key === 'ArrowDown') keys['s'] = true;
+    if (e.key === 'ArrowLeft') keys['a'] = true;
+    if (e.key === 'ArrowRight') keys['d'] = true;
+  });
+
+  document.addEventListener('keyup', e => {
+    const key = e.key.toLowerCase();
+    keys[key] = false;
+
+    if (e.key === 'ArrowUp') keys['w'] = false;
+    if (e.key === 'ArrowDown') keys['s'] = false;
+    if (e.key === 'ArrowLeft') keys['a'] = false;
+    if (e.key === 'ArrowRight') keys['d'] = false;
+  });
+
+  document.querySelectorAll('.controls div[data-direction]').forEach(btn => {
+    const dir = btn.getAttribute('data-direction');
+    btn.addEventListener('mousedown', () => {
+      if (dir === 'up') keys['w'] = true;
+      if (dir === 'down') keys['s'] = true;
+      if (dir === 'left') keys['a'] = true;
+      if (dir === 'right') keys['d'] = true;
+    });
+
+    btn.addEventListener('mouseup', () => {
+      if (dir === 'up') keys['w'] = false;
+      if (dir === 'down') keys['s'] = false;
+      if (dir === 'left') keys['a'] = false;
+      if (dir === 'right') keys['d'] = false;
+    });
+
+    // Optional: handle mouse leaving the button while held
+    btn.addEventListener('mouseleave', () => {
+      if (dir === 'up') keys['w'] = false;
+      if (dir === 'down') keys['s'] = false;
+      if (dir === 'left') keys['a'] = false;
+      if (dir === 'right') keys['d'] = false;
+    });
+
+    // Touch support for mobile
+    btn.addEventListener('touchstart', (e) => {
+      e.preventDefault(); // Prevent scrolling
+      if (dir === 'up') keys['w'] = true;
+      if (dir === 'down') keys['s'] = true;
+      if (dir === 'left') keys['a'] = true;
+      if (dir === 'right') keys['d'] = true;
+    });
+
+    btn.addEventListener('touchend', () => {
+      if (dir === 'up') keys['w'] = false;
+      if (dir === 'down') keys['s'] = false;
+      if (dir === 'left') keys['a'] = false;
+      if (dir === 'right') keys['d'] = false;
+    });
+  });
+
+  function updateBars() {
+    statusBars.forEach((bar, index) => {
+      bar.style.width = Math.max(0, Math.min(100, barValues[index])) + '%';
+    });
+
+    const happinessValue = barValues[3];
+    const happinessIcon = document.getElementById('happinessIcon');
+    if (happinessIcon) {
+      if (happinessValue < 40) {
+        happinessIcon.src = 'assets/happiness3.png';
+      } else if (happinessValue < 75) {
+        happinessIcon.src = 'assets/happiness2.png';
+      } else {
+        happinessIcon.src = 'assets/happiness1.png';
+      }
+    }
+  }
+
+  function updateRightPanel(name, actions) {
+    locationTitle.textContent = `You're at Planet ${name}`;
+    const buttons = rightPanel.querySelectorAll('.button');
+    buttons.forEach((btn, index) => {
+      if (actions[index]) {
+        btn.textContent = actions[index].label;
+        btn.setAttribute('data-delta', actions[index].delta || 0);
+        btn.setAttribute('data-stat', actions[index].stat);
+        btn.style.display = 'block';
+      } else {
+        btn.style.display = 'none';
+      }
+    });
+  }
+
+  let gameOverTriggered = false;
+
+  function checkGameOver() {
+    console.log(barValues); 
+    if (barValues.some(value => value <= 0) && !gameOverTriggered) {  
+        gameOverScreen.style.display = 'block';
+        gameOverTriggered = true; 
+    }
+  }
+
+  function restartGame() {
+    location.reload();
+  }
+
+  function gameLoop() {
+    const gameArea = document.getElementById('gameArea');
+    const gameAreaRect = gameArea.getBoundingClientRect();
+    const playerRect = player.getBoundingClientRect();
+    
+    // Restrict movement inside the game area
+    if (keys['w'] && playerRect.top > gameAreaRect.top) y -= speed; // Moving up
+    if (keys['s'] && playerRect.bottom < gameAreaRect.bottom) y += speed; // Moving down
+    if (keys['a'] && playerRect.left > gameAreaRect.left) x -= speed; // Moving left
+    if (keys['d'] && playerRect.right < gameAreaRect.right) x += speed; // Moving right
+
+    player.style.left = x + 'px';
+    player.style.top = y + 'px';
+
+    locations.forEach(loc => {
+      const el = document.getElementById(loc.id);
+      if (!el) return;
+
+      const px = player.offsetLeft + player.offsetWidth / 2;
+      const py = player.offsetTop + player.offsetHeight / 2;
+      const cx = el.offsetLeft + el.offsetWidth / 2;
+      const cy = el.offsetTop + el.offsetHeight / 2;
+
+      const distance = Math.hypot(px - cx, py - cy);
+
+      if (distance < 80) {
+        el.classList.add('wiggle');
+        if (currentLocation !== loc) {
+          currentLocation = loc;
+          updateRightPanel(loc.id, loc.actions);
+        }
+      } else {
+        el.classList.remove('wiggle');
+      }
+    });
+
+    updateBars();
+    checkGameOver();
+    requestAnimationFrame(gameLoop);
+  }
+
+  setInterval(() => {
+    for (let i = 0; i < barValues.length; i++) {
+        barValues[i] = Math.max(0, barValues[i] - 1);
+    }
+    updateBars();
+    checkGameOver();
+  }, 1000);
+
+  window.addEventListener('load', () => {
+    const playerName = localStorage.getItem('playerName') || 'Player';
+    const hour = new Date().getHours();
+    let timeGreeting = "Hello";
+
+    if (hour >= 5 && hour < 12) timeGreeting = "Good Morning";
+    else if (hour >= 12 && hour < 17) timeGreeting = "Good Afternoon";
+    else if (hour >= 17 && hour < 21) timeGreeting = "Good Evening";
+    else timeGreeting = "Good Night";
+
+    greeting.textContent = `${timeGreeting} ${playerName}`;
+
+    const selectedCharacter = JSON.parse(localStorage.getItem('selectedCharacter'));
+    if (selectedCharacter && selectedCharacter.img) {
+      player.src = selectedCharacter.img;
+    } else {
+      player.src = 'assets/default.png';
+    }
+  });
+
+ 
+  let currency = 100;
+
+  
+  const topRightContainer = document.getElementById('topRightContainer');
+
+  const clockContainer = document.createElement('div');
+  clockContainer.id = 'clockContainer';
+  topRightContainer.appendChild(clockContainer);
+
+  const currencyDisplay = document.createElement('div');
+  currencyDisplay.id = 'currencyDisplay';
+  currencyDisplay.innerHTML = '<span>💰</span> 100';
+  topRightContainer.appendChild(currencyDisplay);
+
+
+  function updateCurrencyDisplay() {
+      currencyDisplay.innerHTML = `<span>💰</span> ${currency}`;
+  }
+
+  function earnCurrency(amount) {
+      currency += amount;
+      updateCurrencyDisplay();
+  }
+
+  // Function to spend currency (buying something)
+  function spendCurrency(amount) {
+      if (currency >= amount) {
+          currency -= amount;
+          updateCurrencyDisplay();
+          return true;
+      } else {
+          alert('Not enough money!');
+          return false;
+      }
+  }
+
+  function performAction(index) {
+      const buttons = rightPanel.querySelectorAll('.button');
+      const stat = parseInt(buttons[index].getAttribute('data-stat'));
+      const delta = parseInt(buttons[index].getAttribute('data-delta'));
+      const cost = 10; // Cost for refilling any bar
+
+      if (!isNaN(stat) && !isNaN(delta)) {
+          if (currentLocation.id === 'Apple') {
+              earnCurrency(15);
+              barValues[stat] = Math.max(0, Math.min(100, barValues[stat] + delta));
+              updateBars();
+          } else {
+              if (spendCurrency(cost)) {
+                  barValues[stat] = Math.max(0, Math.min(100, barValues[stat] + delta));
+                  updateBars();
+              }
+          }
+      }
+  }
+
+  // Initialize in-game time based on real-time clock
+  let gameHours = new Date().getHours();
+  let gameMinutes = new Date().getMinutes();
+
+  // Function to update the in-game clock
+  function updateGameClock() {
+      gameMinutes += 1;
+      if (gameMinutes >= 60) {
+          gameMinutes = 0;
+          gameHours = (gameHours + 1) % 24;
+      }
+
+      // Format time (HH:MM)
+      const formattedTime = `${String(gameHours).padStart(2, '0')}:${String(gameMinutes).padStart(2, '0')}`;
+      clockContainer.textContent = `🕒 ${formattedTime}`;
+  }
+
+  // Start the game clock (1 real second = 1 game minute)
+  setInterval(updateGameClock, 1000);
+  updateGameClock();
+
+
+  window.addEventListener('click', () => {
+    const bgMusic = document.getElementById('bgMusic');
+    if (bgMusic.paused) {
+      bgMusic.play();
+    }
+  }, { once: true });
+  updateBars();
+  gameLoop();
+</script>
+</body>
+</html>

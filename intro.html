@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Character Selection</title>
+    <link rel="stylesheet" href="style2.css" />
+</head>
+<body>
+    <!-- Background Music -->
+    <audio id="bgMusic" src="assets/1.mp3" loop></audio>
+
+    <img id="title" src="assets/title.png" />
+    <div class="character-box">
+        <img src="assets/arrow.png" alt="Left" class="nav-button" onclick="prevCharacter()">
+        <img id="characterImage" src="assets/ship1.png" alt="Character">
+        <img src="assets/arrow2.png" alt="Right" class="nav-button" onclick="nextCharacter()">
+    </div>
+    <h2 id="characterName">Ship 1</h2>
+    <div class="name-input">
+        <input type="text" id="playerName" placeholder="Enter your name">
+    </div>
+    <div>
+        <img src="assets/start.png" alt="Enter" class="enter-button" onclick="enterGame()">
+    </div>
+
+    <script>
+        const characters = [
+            { name: "Ship 1", img: "assets/ship1.png" },
+            { name: "Ship 2", img: "assets/ship2.png" },
+            { name: "Ship 3", img: "assets/ship3.png" },
+            { name: "Ship 4", img: "assets/ship4.png" }
+        ];
+        let currentIndex = 0;
+
+        function updateCharacter() {
+            document.getElementById("characterImage").src = characters[currentIndex].img;
+            document.getElementById("characterName").textContent = characters[currentIndex].name;
+        }
+
+        function prevCharacter() {
+            currentIndex = (currentIndex - 1 + characters.length) % characters.length;
+            updateCharacter();
+        }
+
+        function nextCharacter() {
+            currentIndex = (currentIndex + 1) % characters.length;
+            updateCharacter();
+        }
+
+        function enterGame() {
+            const selectedCharacter = characters[currentIndex];
+            const playerName = document.getElementById("playerName").value;
+            localStorage.setItem("selectedCharacter", JSON.stringify(selectedCharacter));
+            localStorage.setItem("playerName", playerName);
+            window.location.href = "game.html";
+        }
+
+        // Start music on first user interaction (browsers often require this)
+        window.addEventListener('click', () => {
+            const audio = document.getElementById("bgMusic");
+            audio.play();
+        }, { once: true });
+    </script>
+</body>
+</html>
