@@ -13,8 +13,6 @@ body {
   font-style: normal;
 }
 
-
-
 #bgImage {
   position: fixed;
   top: 0;
@@ -284,4 +282,84 @@ body {
   padding: 8px 12px;
   border-radius: 10px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+
+/* Phone Ver */
+@media (max-width: 768px) {
+  .top-bar {
+    flex-direction: column;
+    height: auto;
+    padding: 10px;
+    gap: 10px;
+    align-items: center;
+  }
+
+  #greeting {
+    font-size: 4vw;
+    text-align: center;
+  }
+
+  .status-bars {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .status-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .status-bar {
+    width: 100px;
+    height: 10px;
+  }
+
+  .main-wrapper {
+    flex-direction: column;
+    align-items: center;
+    height: auto;
+    padding: 10px;
+  }
+
+  .game-area {
+    width: 90vw;
+    height: 60vh;
+  }
+
+  .right-panel {
+    width: 90vw;
+    height: auto;
+  }
+
+  .controls {
+    grid-template-columns: repeat(3, 60px);
+    grid-template-rows: repeat(3, 60px);
+    gap: 8px;
+  }
+
+  .controls div {
+    font-size: 1.2rem;
+    height: 60px;
+  }
+
+  #player {
+    width: 40px;
+    height: 40px;
+  }
+
+  #Apple, #Butter, #Cookie, #Donut, #Coffee {
+    width: 50px !important;
+    height: 50px !important;
+  }
+
+  #currencyDisplay, #clockContainer {
+    font-size: 16px;
+    padding: 6px 10px;
+  }
+
+  #currencyDisplay span {
+    font-size: 20px;
+  }
 }
